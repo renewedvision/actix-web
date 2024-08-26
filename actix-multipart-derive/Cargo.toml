@@ -25,8 +25,8 @@ quote = "1"
 syn = "2"
 
 [dev-dependencies]
-actix-multipart = "0.7"
-actix-web = "4"
+actix-multipart = { git = "https://github.com/renewedvision/actix-web.git", branch = "rtsp_support" }
+actix-web = { git = "https://github.com/renewedvision/actix-web.git", branch = "rtsp_support" }
 rustversion = "1"
 trybuild = "1"
 

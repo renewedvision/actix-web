@@ -214,7 +214,7 @@ impl TryFrom<&syn::LitStr> for MethodTypeExt {
     fn try_from(value: &syn::LitStr) -> Result<Self, Self::Error> {
         match MethodType::try_from(value) {
             Ok(method) => Ok(MethodTypeExt::Standard(method)),
-            Err(_) if value.value().chars().all(|c| c.is_ascii_uppercase()) => {
+            Err(_) if value.value().chars().all(|c| c.is_ascii_uppercase() || c == '_') => {
                 Ok(MethodTypeExt::Custom(value.clone()))
             }
             Err(err) => Err(err),

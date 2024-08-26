@@ -20,7 +20,7 @@ default = ["compat-routing-macros-force-pub"]
 compat-routing-macros-force-pub = []
 
 [dependencies]
-actix-router = { version = "0.5", default-features = false }
+actix-router = { git = "https://github.com/renewedvision/actix-web.git", branch = "rtsp_support", default-features = false }
 proc-macro2 = "1"
 quote = "1"
 syn = { version = "2", features = ["full", "extra-traits"] }

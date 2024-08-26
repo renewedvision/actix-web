@@ -83,6 +83,7 @@ pub enum Protocol {
     Http1,
     Http2,
     Http3,
+    Rtsp,
 }
 
 type ConnectCallback<IO> = dyn Fn(&IO, &mut Extensions);

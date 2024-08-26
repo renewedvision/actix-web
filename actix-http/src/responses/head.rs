@@ -2,7 +2,7 @@
 
 use std::{cell::RefCell, ops};
 
-use crate::{header::HeaderMap, message::Flags, ConnectionType, StatusCode, Version};
+use crate::{header::HeaderMap, message::Flags, ConnectionType, Protocol, StatusCode, Version};
 
 thread_local! {
     static RESPONSE_POOL: BoxedResponsePool = BoxedResponsePool::create();
@@ -11,6 +11,7 @@ thread_local! {
 #[derive(Debug, Clone)]
 pub struct ResponseHead {
     pub version: Version,
+    pub protocol: Protocol,
     pub status: StatusCode,
     pub headers: HeaderMap,
     pub reason: Option<&'static str>,
@@ -24,6 +25,7 @@ impl ResponseHead {
         ResponseHead {
             status,
             version: Version::HTTP_11,
+            protocol: Protocol::Http1,
             headers: HeaderMap::with_capacity(12),
             reason: None,
             flags: Flags::empty(),

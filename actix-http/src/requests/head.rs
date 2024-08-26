@@ -3,7 +3,7 @@ use std::{net, rc::Rc};
 use crate::{
     header::{self, HeaderMap},
     message::{Flags, Head, MessagePool},
-    ConnectionType, Method, Uri, Version,
+    ConnectionType, Method, Protocol, Uri, Version,
 };
 
 thread_local! {
@@ -15,6 +15,7 @@ pub struct RequestHead {
     pub method: Method,
     pub uri: Uri,
     pub version: Version,
+    pub protocol: Protocol,
     pub headers: HeaderMap,
 
     /// Will only be None when called in unit tests unless set manually.
@@ -29,6 +30,7 @@ impl Default for RequestHead {
             method: Method::default(),
             uri: Uri::default(),
             version: Version::HTTP_11,
+            protocol: Protocol::Http1,
             headers: HeaderMap::with_capacity(16),
             peer_addr: None,
             flags: Flags::empty(),

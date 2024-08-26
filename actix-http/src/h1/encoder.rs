@@ -269,7 +269,7 @@ impl MessageType for Response<()> {
         dst.reserve(256 + head.headers.len() * AVERAGE_HEADER_SIZE + reason.len());
 
         // status line
-        helpers::write_status_line(head.version, head.status.as_u16(), dst);
+        helpers::write_status_line(head.version, head.protocol, head.status.as_u16(), dst);
         dst.put_slice(reason);
         Ok(())
     }
@@ -304,13 +304,17 @@ impl MessageType for RequestHeadType {
             "{} {} {}",
             head.method,
             head.uri.path_and_query().map(|u| u.as_str()).unwrap_or("/"),
-            match head.version {
-                Version::HTTP_09 => "HTTP/0.9",
-                Version::HTTP_10 => "HTTP/1.0",
-                Version::HTTP_11 => "HTTP/1.1",
-                Version::HTTP_2 => "HTTP/2.0",
-                Version::HTTP_3 => "HTTP/3.0",
-                _ => return Err(io::Error::new(io::ErrorKind::Other, "unsupported version")),
+            if head.protocol != crate::Protocol::Rtsp {
+                match head.version {
+                    Version::HTTP_09 => "HTTP/0.9",
+                    Version::HTTP_10 => "HTTP/1.0",
+                    Version::HTTP_11 => "HTTP/1.1",
+                    Version::HTTP_2 => "HTTP/2.0",
+                    Version::HTTP_3 => "HTTP/3.0",
+                    _ => return Err(io::Error::new(io::ErrorKind::Other, "unsupported version")),
+                }
+            } else {
+                "RTSP/1.0"
             }
         )
         .map_err(|e| io::Error::new(io::ErrorKind::Other, e))

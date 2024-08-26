@@ -225,8 +225,9 @@ where
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let res = writeln!(
             f,
-            "\nResponse {:?} {}{}",
+            "\nResponse {:?} {:?} {}{}",
             self.head.version,
+            self.head.protocol,
             self.head.status,
             self.head.reason.unwrap_or(""),
         );
