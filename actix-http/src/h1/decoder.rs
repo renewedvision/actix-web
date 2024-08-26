@@ -9,7 +9,7 @@ use http::{
 use tracing::{debug, error, trace};
 
 use super::chunked::ChunkedState;
-use crate::{error::ParseError, header::HeaderMap, ConnectionType, Request, ResponseHead};
+use crate::{error::ParseError, header::HeaderMap, ConnectionType, Protocol, Request, ResponseHead};
 
 pub(crate) const MAX_BUFFER_SIZE: usize = 131_072;
 const MAX_HEADERS: usize = 96;
@@ -231,7 +231,7 @@ impl MessageType for Request {
     fn decode(src: &mut BytesMut) -> Result<Option<(Self, PayloadType)>, ParseError> {
         let mut headers: [HeaderIndex; MAX_HEADERS] = EMPTY_HEADER_INDEX_ARRAY;
 
-        let (len, method, uri, ver, h_len) = {
+        let (len, method, uri, ver, protocol, h_len) = {
             // SAFETY:
             // Create an uninitialized array of `MaybeUninit`. The `assume_init` is safe because the
             // type we are claiming to have initialized here is a bunch of `MaybeUninit`s, which
@@ -248,14 +248,19 @@ impl MessageType for Request {
                     let method = Method::from_bytes(req.method.unwrap().as_bytes())
                         .map_err(|_| ParseError::Method)?;
                     let uri = Uri::try_from(req.path.unwrap())?;
-                    let version = if req.version.unwrap() == 1 {
+                    let version = if req.version.unwrap() == 1 || req.protocol.unwrap() == "RTSP" {
                         Version::HTTP_11
                     } else {
                         Version::HTTP_10
                     };
+                    let protocol = if req.protocol.unwrap() == "RTSP" {
+                        Protocol::Rtsp
+                    } else {
+                        Protocol::Http1
+                    };
                     HeaderIndex::record(src, req.headers, &mut headers);
 
-                    (len, method, uri, version, req.headers.len())
+                    (len, method, uri, version, protocol, req.headers.len())
                 }
 
                 httparse::Status::Partial => {
@@ -309,6 +314,7 @@ impl MessageType for Request {
         head.uri = uri;
         head.method = method;
         head.version = ver;
+        head.protocol = protocol;
 
         Ok(Some((msg, decoder)))
     }

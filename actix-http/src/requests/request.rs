@@ -210,8 +210,9 @@ impl<P> fmt::Debug for Request<P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(
             f,
-            "\nRequest {:?} {}:{}",
+            "\nRequest {:?} {:?} {}:{}",
             self.version(),
+            self.head().protocol,
             self.method(),
             self.path()
         )?;

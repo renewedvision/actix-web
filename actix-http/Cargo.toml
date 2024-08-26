@@ -104,8 +104,8 @@ derive_more = { version = "2", features = ["as_ref", "deref", "deref_mut", "disp
 encoding_rs = "0.8"
 foldhash = "0.1"
 futures-core = { version = "0.3.17", default-features = false, features = ["alloc"] }
-http = "0.2.7"
-httparse = "1.5.1"
+http = { git = "https://github.com/renewedvision/http.git", branch = "rtsp_support" }
+httparse = { git = "https://github.com/renewedvision/httparse.git", branch = "rtsp_support" }
 httpdate = "1.0.1"
 itoa = "1"
 language-tags = "0.3"
@@ -138,7 +138,7 @@ zstd = { version = "0.13", optional = true }
 actix-http-test = { version = "3", features = ["openssl"] }
 actix-server = "2"
 actix-tls = { version = "3.4", features = ["openssl", "rustls-0_23-webpki-roots"] }
-actix-web = "4"
+actix-web = { git = "https://github.com/renewedvision/actix-web.git", branch = "rtsp_support" }
 
 async-stream = "0.3"
 criterion = { version = "0.5", features = ["html_reports"] }

@@ -276,6 +276,7 @@ impl<'a> From<&'a ResponseHead> for ResponseBuilder {
     fn from(head: &'a ResponseHead) -> ResponseBuilder {
         let mut msg = BoxedResponseHead::new(head.status);
         msg.version = head.version;
+        msg.protocol = head.protocol;
         msg.reason = head.reason;
 
         for (k, v) in head.headers.iter() {
@@ -297,8 +298,9 @@ impl fmt::Debug for ResponseBuilder {
 
         let res = writeln!(
             f,
-            "\nResponseBuilder {:?} {}{}",
+            "\nResponseBuilder {:?} {:?} {}{}",
             head.version,
+            head.protocol,
             head.status,
             head.reason.unwrap_or(""),
         );

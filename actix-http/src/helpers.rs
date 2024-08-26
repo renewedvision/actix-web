@@ -2,16 +2,21 @@ use std::io;
 
 use bytes::BufMut;
 use http::Version;
+use crate::Protocol;
 
 const DIGITS_START: u8 = b'0';
 
-pub(crate) fn write_status_line<B: BufMut>(version: Version, n: u16, buf: &mut B) {
-    match version {
-        Version::HTTP_11 => buf.put_slice(b"HTTP/1.1 "),
-        Version::HTTP_10 => buf.put_slice(b"HTTP/1.0 "),
-        Version::HTTP_09 => buf.put_slice(b"HTTP/0.9 "),
-        _ => {
-            // other HTTP version handlers do not use this method
+pub(crate) fn write_status_line<B: BufMut>(version: Version, protocol: Protocol, n: u16, buf: &mut B) {
+    if protocol == Protocol::Rtsp {
+        buf.put_slice(b"RTSP/1.0 ");
+    } else {
+        match version {
+            Version::HTTP_11 => buf.put_slice(b"HTTP/1.1 "),
+            Version::HTTP_10 => buf.put_slice(b"HTTP/1.0 "),
+            Version::HTTP_09 => buf.put_slice(b"HTTP/0.9 "),
+            _ => {
+                // other HTTP version handlers do not use this method
+            }
         }
     }
 
@@ -87,17 +92,17 @@ mod tests {
     fn test_status_line() {
         let mut bytes = BytesMut::new();
         bytes.reserve(50);
-        write_status_line(Version::HTTP_11, 200, &mut bytes);
+        write_status_line(Version::HTTP_11, Protocol::Http1, 200, &mut bytes);
         assert_eq!(from_utf8(&bytes.split().freeze()).unwrap(), "HTTP/1.1 200 ");
 
         let mut bytes = BytesMut::new();
         bytes.reserve(50);
-        write_status_line(Version::HTTP_09, 404, &mut bytes);
+        write_status_line(Version::HTTP_09, Protocol::Http1, 404, &mut bytes);
         assert_eq!(from_utf8(&bytes.split().freeze()).unwrap(), "HTTP/0.9 404 ");
 
         let mut bytes = BytesMut::new();
         bytes.reserve(50);
-        write_status_line(Version::HTTP_09, 515, &mut bytes);
+        write_status_line(Version::HTTP_09, Protocol::Http1, 515, &mut bytes);
         assert_eq!(from_utf8(&bytes.split().freeze()).unwrap(), "HTTP/0.9 515 ");
     }
 

@@ -23,8 +23,8 @@ allowed_external_types = [
 [dependencies]
 actix = { version = ">=0.12, <0.14", default-features = false }
 actix-codec = "0.5"
-actix-http = "3"
-actix-web = { version = "4", default-features = false, features = ["ws"] }
+actix-http = { git = "https://github.com/renewedvision/actix-web.git", branch = "rtsp_support", features = ["ws"] }
+actix-web = { git = "https://github.com/renewedvision/actix-web.git", branch = "rtsp_support", default-features = false, features = ["ws"] }
 
 bytes = "1"
 bytestring = "1"
@@ -36,7 +36,7 @@ tokio-util = { version = "0.7", features = ["codec"] }
 [dev-dependencies]
 actix-rt = "2.2"
 actix-test = "0.1"
-actix-web = { version = "4", features = ["macros"] }
+actix-web = { git = "https://github.com/renewedvision/actix-web.git", branch = "rtsp_support", features = ["macros"] }
 awc = { version = "3", default-features = false }
 
 env_logger = "0.11"
